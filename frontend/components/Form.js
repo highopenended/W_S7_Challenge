@@ -10,6 +10,12 @@ const toppings = [
   { topping_id: '5', text: 'Ham' },
 ]
 
+const pizzaSizes = [
+  { name: 'S', text: 'small' },
+  { name: 'M', text: 'medium' },
+  { name: 'L', text: 'large' }
+]
+
 
 
 
@@ -26,7 +32,7 @@ const validationErrors = {
 // 👇 Here you will create your schema.
 const schema = Yup.object().shape({
   fullName: Yup
-    .string()
+    .string().trim()
     .required(validationErrors.fullNameTooShort)
     .min(3,validationErrors.fullNameTooShort)
     .max(20,validationErrors.fullNameTooLong),
@@ -42,13 +48,14 @@ const schema = Yup.object().shape({
 
 
 
-const initialValues={fullName:'',size:''}
+const initialValues={fullName:'',size:'',checkboxes:[false,false,false,false,false]}
 const initialErrors={fullName:'',size:''}
 
 
 export default function Form() {
   const [values, setValues] = useState(initialValues)
   const [errors, setErrors] = useState(initialErrors)
+  const [success, setSuccess] = useState('')
   const [submitEnabled, setSubmitEnabled] = useState(false)
 
 
@@ -59,16 +66,18 @@ export default function Form() {
   }, [values]);
 
   const changeHandler=(evt)=>{
-    let name
-    let val
-    if(evt.target.type==="checkbox"){
+    let { type, checked, name, val } = evt.target;
+    if(type==="checkbox"){
       name=evt.target.name
-      val=evt.target.checked
+      let newArr =[...values.checkboxes]
+      newArr[name-1]=checked
+      val=newArr
+      setValues({...values, checkboxes:val})
     }else{
       name=evt.target.id
       val=evt.target.value
+      setValues({...values, [name]:val})
     }
-    setValues({...values, [name]:val})
     
     Yup
       .reach(schema,name)
@@ -81,16 +90,39 @@ export default function Form() {
       })
   }
 
+
+  const submitHandler=(evt)=>{
+    evt.preventDefault()
+    let toppingCount =0
+    values.checkboxes.forEach(val=>{if(val) toppingCount++})
+    if(toppingCount===0){
+      toppingCount='no toppings'
+    }else if(toppingCount===1){
+      toppingCount+=' topping'
+    }else{
+      toppingCount+=' toppings'
+    }
+    let pizzaSize=pizzaSizes.filter(obj=>obj.name===values.size)[0].text
+    let successMessage = `Thank you for your order, ${values.fullName}! Your ${pizzaSize} pizza with ${toppingCount} is on the way.`
+    setSuccess(successMessage)
+    setValues(initialValues)
+    setSubmitEnabled(false)
+  }
+
+
+
+
+
   return (
     <form>
       <h2>Order Your Pizza</h2>
-      {true && <div className='success'>Thank you for your order!</div>}
-      {true && <div className='failure'>Something went wrong</div>}
+      {success  && <div className='success'>{success}</div>}
+      {errors.fullName && <div className='failure'>{errors.fullName}</div>}
 
       <div className="input-group">
         <div>
           <label htmlFor="fullName">Full Name</label><br />
-          <input onChange={changeHandler} placeholder="Type full name" id="fullName" name="fullName" type="text" />
+          <input onChange={changeHandler} placeholder="Type full name" id="fullName" name="fullName" type="text" value={values.fullName} />
         </div>
         {errors.fullName && <div className='error'>{errors.fullName}</div>}
       </div>
@@ -98,7 +130,7 @@ export default function Form() {
       <div className="input-group">
         <div>
           <label htmlFor="size">Size</label><br />
-          <select onChange={changeHandler} id="size" name="size">
+          <select onChange={changeHandler} id="size" name="size" value={values.size}>
             <option value>----Choose Size----</option>
             <option value="S">Small</option>
             <option value="M">Medium</option>
@@ -115,6 +147,7 @@ export default function Form() {
               onChange={changeHandler}
               name={topping.topping_id}
               type="checkbox"
+              checked={values.checkboxes[topping.topping_id-1]}
             />
             {topping.text}<br />
           </label>
@@ -122,7 +155,7 @@ export default function Form() {
         
       </div>
       {/* 👇 Make sure the submit stays disabled until the form validates! */}
-      <input disabled={!submitEnabled} type="submit" />
+      <input onClick={submitHandler} disabled={!submitEnabled} type="submit" />
     </form>
     
   )
