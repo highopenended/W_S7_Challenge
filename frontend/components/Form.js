@@ -117,7 +117,7 @@ export default function Form() {
     <form>
       <h2>Order Your Pizza</h2>
       {success  && <div className='success'>{success}</div>}
-      {errors.fullName && <div className='failure'>{errors.fullName}</div>}
+      {/* {errors.fullName && <div className='failure'>{errors.fullName}</div>} */}
 
       <div className="input-group">
         <div>
@@ -131,7 +131,7 @@ export default function Form() {
         <div>
           <label htmlFor="size">Size</label><br />
           <select onChange={changeHandler} id="size" name="size" value={values.size}>
-            <option value>----Choose Size----</option>
+            <option value=''>----Choose Size----</option>
             <option value="S">Small</option>
             <option value="M">Medium</option>
             <option value="L">Large</option>
