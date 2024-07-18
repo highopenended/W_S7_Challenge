@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from 'react'
+import * as Yup from "yup";
+
+
 
 // 👇 Here are the validation errors you will use with Yup.
 const validationErrors = {
@@ -8,6 +11,23 @@ const validationErrors = {
 }
 
 // 👇 Here you will create your schema.
+// const schema = Yup.object().shape({
+//   // 'name' is expected to be a string, mandatory, and accompanied by a warning message if absent
+//   name: Yup.string()
+//     .required("fullName is required")
+//     .min(3,validationErrors.fullNameTooShort)
+//     .max(20,validationErrors.fullNameTooLong),
+
+//   // Similarly, 'email' is also expected to be a string conforming to an email pattern, and it's mandatory
+//   size: Yup.string()
+//     .required("size is required")
+//     .oneOf(['S','M','L'],validationErrors.sizeIncorrect),
+
+//   // 'age' is validated against a minimum value and includes a corresponding warning message
+//   age: Yup.number()
+//     .min(18, "Must be at least 18 years old")
+//     .required("Age is required"),
+// });
 
 // 👇 This array could help you construct your checkboxes using .map in the JSX.
 const toppings = [
@@ -46,13 +66,16 @@ export default function Form() {
 
       <div className="input-group">
         {/* 👇 Maybe you could generate the checkboxes dynamically */}
-        <label key="1">
-          <input
-            name="Pepperoni"
-            type="checkbox"
-          />
-          Pepperoni<br />
-        </label>
+        {toppings.map(topping=>{
+          return <label key={topping.topping_id}>
+            <input
+              name={topping.text}
+              type="checkbox"
+            />
+            {topping.text}<br />
+          </label>
+        })}
+        
       </div>
       {/* 👇 Make sure the submit stays disabled until the form validates! */}
       <input type="submit" />
