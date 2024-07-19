@@ -16,18 +16,12 @@ const pizzaSizes = [
   { name: 'L', text: 'large' }
 ]
 
-
-
-
-
-
 // 👇 Here are the validation errors you will use with Yup.
 const validationErrors = {
   fullNameTooShort: 'full name must be at least 3 characters',
   fullNameTooLong: 'full name must be at most 20 characters',
   sizeIncorrect: 'size must be S or M or L'
 }
-
 
 // 👇 Here you will create your schema.
 const schema = Yup.object().shape({
@@ -43,21 +37,14 @@ const schema = Yup.object().shape({
     .oneOf(['S','M','L'],validationErrors.sizeIncorrect),
 });
  
-
-
-
-
-
 const initialValues={fullName:'',size:'',checkboxes:[false,false,false,false,false]}
 const initialErrors={fullName:'',size:''}
-
 
 export default function Form() {
   const [values, setValues] = useState(initialValues)
   const [errors, setErrors] = useState(initialErrors)
   const [success, setSuccess] = useState('')
   const [submitEnabled, setSubmitEnabled] = useState(false)
-
 
   useEffect(() => {
     schema.isValid(values).then((isValid) => {
@@ -90,7 +77,6 @@ export default function Form() {
       })
   }
 
-
   const submitHandler=(evt)=>{
     evt.preventDefault()
     let toppingCount =0
@@ -108,9 +94,6 @@ export default function Form() {
     setValues(initialValues)
     setSubmitEnabled(false)
   }
-
-
-
 
 
   return (

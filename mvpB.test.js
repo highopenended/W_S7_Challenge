@@ -69,9 +69,7 @@ describe('Sprint 7 Challenge Learner Tests', () => {
     test('renders a text that reads "javaScript is pretty"', () => {
       render(<HelloWorld />)
       expect(screen.queryByText("javaScript is pretty",{exact: false})).toBeInTheDocument()
-    })
-
-    
+    })    
 })
 
 function sum(a, b) {
